@@ -5,6 +5,7 @@
 #include <3ds.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <unistd.h>
 #include "log.h"
 #include "input.h"
 
@@ -31,4 +32,20 @@ void init_logging(struct in_addr pc_ip,int port) {
 	pc_addr.sin_family = AF_INET;
 	pc_addr.sin_port = htons(port);
 	pc_addr.sin_addr = pc_ip;
+}
+
+void send_log(const char* message) {
+	ssize_t bytes_sent = sendto(
+		log_socket, 
+		message, 
+		strlen(message), 
+		0, 
+		(struct sockaddr *)&pc_addr, 
+		sizeof(pc_addr)
+	);
+}
+
+void cleanup_logging(void) {
+	close(log_socket);
+	socExit();
 }

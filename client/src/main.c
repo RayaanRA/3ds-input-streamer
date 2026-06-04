@@ -14,6 +14,8 @@ int main(int argc, char* argv[]) {
 
 	init_logging(fetch_ip(), fetch_port());
 	printf("Successfully initialized network info.\n");
+	send_log("Hello Windows from 3DS\n");
+	printf("Sent message: Hello Windows from 3DS\n");
 
 	while (aptMainLoop())
 	{
@@ -27,5 +29,6 @@ int main(int argc, char* argv[]) {
 	}
 
 	gfxExit();
+	cleanup_logging();
 	return 0;
 }
