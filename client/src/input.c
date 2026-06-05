@@ -18,7 +18,7 @@ struct in_addr fetch_ip(void) {
 
     while (1) {
         do {
-            status = fetch_swkbd_input(SWKBD_TYPE_NUMPAD, "IP Address", ip_string, sizeof(ip_string) - 1);
+            status = fetch_swkbd_input(SWKBD_TYPE_NORMAL, "IP Address", ip_string, sizeof(ip_string) - 1);
      
             if (status == SWKBD_BUTTON_LEFT || status == SWKBD_BUTTON_NONE) {
                 exit(0);

@@ -34,18 +34,33 @@ void init_logging(struct in_addr pc_ip,int port) {
 	pc_addr.sin_addr = pc_ip;
 }
 
-void send_log(const char* message) {
-	ssize_t bytes_sent = sendto(
-		log_socket, 
-		message, 
-		strlen(message), 
-		0, 
-		(struct sockaddr *)&pc_addr, 
-		sizeof(pc_addr)
-	);
+void send_packet(const void* data, size_t size) {
+    if (log_socket < 0) return;
+
+    size_t bytes_sent = 0;
+    const char* ptr = (const char*)data;
+
+    while (bytes_sent < size) {
+        ssize_t ret = sendto(
+            log_socket, 
+            ptr + bytes_sent, 
+            size - bytes_sent, 
+            0, 
+            (struct sockaddr *)&pc_addr, 
+            sizeof(pc_addr)
+        );
+        
+        if (ret < 0) {
+            if (errno == EWOULDBLOCK || errno == EAGAIN) {
+                svcSleepThread(1000); // Wait 1 millisecond if hardware queue is full
+                continue;
+            }
+            break;
+        }
+        bytes_sent += ret;
+    }
 }
 
 void cleanup_logging(void) {
 	close(log_socket);
-	socExit();
 }
